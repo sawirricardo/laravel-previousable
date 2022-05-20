@@ -17,10 +17,6 @@ trait HasPrevious
 
     public function getPrevious($key = null)
     {
-        if (filled($key)) {
-            return data_get($this->previous, $key);
-        }
-
-        return $this->previous;
+        return data_get($this->previous, $key);
     }
 }
