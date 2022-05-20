@@ -9,6 +9,14 @@
 
 This package provides a trait that will generate previous attributes when saving any Eloquent model.
 
+```php
+$model = EloquentModel::create(['name' => 'Awesome application']);
+$model->update(['name' => 'New attribute']);
+
+$model->getPrevious(); // ['name' => 'Awesome application']
+$model->getPrevious('name'); // 'Awesome application'
+```
+
 ## Support us
 
 [<img src="https://github-ads.s3.eu-central-1.amazonaws.com/laravel-previousable.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/laravel-previousable)
@@ -30,12 +38,20 @@ composer require sawirricardo/laravel-previousable
 
 ## Usage
 
-```php
-$model = EloquentModel::create(['name' => 'Awesome application']);
-$model->update(['name' => 'New attribute']);
+Simply use the `Sawirricardo\Previousable\HasPrevious` trait in your Eloquent Model.
 
-$model->getPrevious(); // ['name' => 'Awesome application']
-$model->getPrevious('name'); // 'Awesome application'
+Here's an example of how to implement the trait:
+
+```php
+namespace App\Models;
+
+use Sawirricardo\Previousable\HasPreviousable;
+use Illuminate\Database\Eloquent\Model;
+
+class EloquentModel extends Model
+{
+    use HasPreviousable;
+}
 ```
 
 ## Testing
