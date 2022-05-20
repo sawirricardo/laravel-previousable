@@ -1,10 +1,12 @@
 <?php
 
-namespace VendorName\Skeleton\Tests;
+namespace Sawirricardo\Previousable\Tests;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Schema;
 use Orchestra\Testbench\TestCase as Orchestra;
-use VendorName\Skeleton\SkeletonServiceProvider;
 
 class TestCase extends Orchestra
 {
@@ -12,25 +14,50 @@ class TestCase extends Orchestra
     {
         parent::setUp();
 
-        Factory::guessFactoryNamesUsing(
-            fn (string $modelName) => 'VendorName\\Skeleton\\Database\\Factories\\'.class_basename($modelName).'Factory'
-        );
+        $this->setUpDatabase($this->app);
     }
 
-    protected function getPackageProviders($app)
+    /**
+     * @param Application $app
+     */
+    protected function getEnvironmentSetUp($app)
     {
-        return [
-            SkeletonServiceProvider::class,
-        ];
+        $this->initializeDirectory($this->getTempDirectory());
+
+        config()->set('database.default', 'sqlite');
+        config()->set('database.connections.sqlite', [
+            'driver' => 'sqlite',
+            'database' => $this->getTempDirectory() . '/database.sqlite',
+            'prefix' => '',
+        ]);
     }
 
-    public function getEnvironmentSetUp($app)
+    /**
+     * @param Application $app
+     */
+    protected function setUpDatabase(Application $app)
     {
-        config()->set('database.default', 'testing');
+        file_put_contents($this->getTempDirectory() . '/database.sqlite', null);
 
-        /*
-        $migration = include __DIR__.'/../database/migrations/create_skeleton_table.php.stub';
-        $migration->up();
-        */
+        Schema::create('test_models', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('name')->nullable();
+            $table->string('field_one')->nullable();
+            $table->jsonb('field_two')->nullable();
+            $table->dateTime('field_three')->nullable();
+        });
+    }
+
+    protected function initializeDirectory(string $directory)
+    {
+        if (File::isDirectory($directory)) {
+            File::deleteDirectory($directory);
+        }
+        File::makeDirectory($directory);
+    }
+
+    protected function getTempDirectory(): string
+    {
+        return __DIR__ . '/temp';
     }
 }
