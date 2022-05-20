@@ -45,12 +45,12 @@ Here's an example of how to implement the trait:
 ```php
 namespace App\Models;
 
-use Sawirricardo\Previousable\HasPreviousable;
+use Sawirricardo\Previousable\HasPrevious;
 use Illuminate\Database\Eloquent\Model;
 
 class EloquentModel extends Model
 {
-    use HasPreviousable;
+    use HasPrevious;
 }
 ```
 
